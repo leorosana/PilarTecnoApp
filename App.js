@@ -1,12 +1,13 @@
 import React from 'react';
-import Home from './src/pages/Home';
+import { NavigationContainer } from '@react-navigation/native';
+import AppStack from './src/routes/index'
 
 const App=()=> {
   
   return (
-    <>
-    <Home />
-    </>
+    <NavigationContainer>
+      <AppStack /> 
+    </NavigationContainer>
   );
 }
 
