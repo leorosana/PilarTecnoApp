@@ -10,7 +10,7 @@ import { Header as HeaderRNE } from '@rneui/base';
 
 const Header=(props)=> {
     const {title='Pilar Tecno', leftComponent, rightComponent} =props
-  
+      
   return (
    
     <HeaderRNE

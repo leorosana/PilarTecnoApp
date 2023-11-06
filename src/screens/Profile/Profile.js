@@ -17,7 +17,7 @@ const Perfil = ()=> {
     <SafeAreaView style ={styles.container}>      
         <Header />
         <View style={{...styles.gridRow, flexDirection:'row'}}>
-            <Text style={{fontSize:50}}> Perfiles </Text>            
+            <Text style={{fontSize:50}}> Perfil </Text>            
         </View>              
       </SafeAreaView>
   );

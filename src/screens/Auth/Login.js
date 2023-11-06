@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
     SafeAreaView,  
     Dimensions,  
@@ -6,28 +6,88 @@ import {
     View,
     Text
 } from 'react-native';
-import Header from '../../components/Header';
+import { Input, Button } from '@rneui/themed';
+import { useDispatch } from 'react-redux';
+import { appActions } from '../../redux/appRedux';
+//import { TouchableOpacity } from 'react-native-gesture-handler';
+//import { counterEvent } from 'react-native/Libraries/Performance/Systrace';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGTH = Dimensions.get('window').height;
 
 const Login = ()=> {
+    const dispatch = useDispatch()
+    const [email, setEmail] = useState("")
+    const [pw, setPW] = useState("")
+
+    handleChangeEmail = (value) => {
+        console.log(value)
+        setEmail(value)
+    }
+
+    handleChangePW = () => {
+        setPW(value)
+    }
+
+    handlePress = () => {
+        dispatch(appActions.setToken(true))
+    }
 
   return (
-    <SafeAreaView style ={styles.container}>      
-        <Header />
-        <View style={{...styles.gridRow, flexDirection:'row'}}>
-            <Text style={{fontSize:100}}> Login </Text>            
-        </View>              
+    <SafeAreaView style ={styles.container} > 
+        <View style={styles.formContainer}>    
+            <View >
+                <Input 
+                    containerStyle={styles.input}
+                    value={email}
+                    onChangeText={value=>handleChangeEmail(value)}
+                    placeholder="Email"
+                    keyboardType="email-address"
+                />
+            </View>
+
+            <View >
+                <Input 
+                    containerStyle={styles.input}
+                    value={pw}
+                    onChangeText={value=>handleChangePW(value)}
+                    placeholder="Contraseña"
+                    secureTextEntry ={true}
+                />
+            </View>  
+
+        </View>  
+        <View style={styles.buttons}>
+            <Button onPress={handlePress} >
+                Ingresar                
+            </Button>
+            <Text > | </Text>
+            <Button onPress={handlePress} >
+                Registrarse                
+            </Button>
+        </View>          
       </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-    gridContainer:{
-        flex:1,
-        height:HEIGTH,
+    formContainer:{
         width:WIDTH,
+        justifyContent:'center',
+        alignItems:'center'
+    },
+    buttons:{
+        flexDirection:'row',
+        marginTop:'15%',
+        justifyContent:'center',
+        alignItems:'center',
+        width:WIDTH*.9
+    },
+    input:{
+        height:40,
+        margin:12,
+        width:WIDTH*.9,
+        padding:10,
     },
     gridColum:{
         flex:1,
