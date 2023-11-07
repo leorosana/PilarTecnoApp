@@ -10,7 +10,7 @@ import { Header as HeaderRNE } from '@rneui/base';
 
 const Header=(props)=> {
     const {title='Pilar Tecno', leftComponent, rightComponent} =props
-      
+          
   return (
    
     <HeaderRNE
@@ -30,7 +30,7 @@ const Header=(props)=> {
           <TouchableOpacity
             style={{ marginLeft: 10 }}
             onPress={()=>console.log('Cohetee..')}
-           >
+            >
             <Icon type="antdesign" name="rocket1" color="white" />
           </TouchableOpacity>
         </View>
