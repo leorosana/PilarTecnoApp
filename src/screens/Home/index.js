@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
         elevation:5
     },
     buttonTitle:{
-        fontSize:18,
+        fontSize:12,
         color:'#550000',
         fontWeight:500,
         elevation:3

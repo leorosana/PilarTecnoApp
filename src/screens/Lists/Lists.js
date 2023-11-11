@@ -1,75 +1,165 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
-    SafeAreaView,  
-    Dimensions,  
-    StyleSheet,
+    RefreshControl,
     View,
-    Text, 
-    TouchableOpacity
+    Dimensions,
+    ActivityIndicator,
+    FlatList,
+    TouchableOpacity,
+    StyleSheet
 } from 'react-native';
-import Header from '../../components/Header';
+import { Text, Avatar, Button, Icon, ListItem } from '@rneui/themed';
+import Header from '../../components/Header'
+import { getPokemonList, IMG_URL } from '../../api'
 
-const WIDTH = Dimensions.get('window').width;
-const HEIGTH = Dimensions.get('window').height;
+const width = Dimensions.get('window').width;
+const height = Dimensions.get('window').height;
 
-const Listas = (props)=> {
-
-    const handlePress = ()=> {
-        props.navigation.navigate ('ListDetail')
-    }
-
-  return (
-    <SafeAreaView style ={styles.container}>      
-        <Header />
-        <View style={{...styles.gridRow, flexDirection:'row'}}>
-            <Text style={{fontSize:50}}> Listas </Text>  
-            <TouchableOpacity style={{...styles.gridButton, backgroundColor:'#f4f1bb'}} onPress={handlePress}>
-                        <Text style={{...styles.buttonTitle}}> Ir al detalle </Text>
-                    </TouchableOpacity>           
-        </View>              
-      </SafeAreaView>
-  );
+const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
 }
 
-const styles = StyleSheet.create({
-    gridContainer:{
-        flex:1,
-        height:HEIGTH,
-        width:WIDTH,
-    },
-    gridColum:{
-        flex:1,
-        alignItems:'center',
-        
-    },
-    gridRow:{
-        flex:1,
-        justifyContent:'center',
-        alignItems:'center'
-        
-    },
-    gridButton:{
-        width:WIDTH*.4,
-        height:WIDTH*.4,
-        alignItems:'center',
-        justifyContent:'center',
-        borderRadius:8,
-        elevation:5
-    },
-    buttonTitle:{
-        fontSize:18,
-        color:'#550000',
-        fontWeight:500,
-        elevation:3
-    },
-  container:{
-    flex:1,
-    height:'100%',
-    width:'100%',
-    backgroundColor:'#c4915e',
-    justifyContent:'center'
-  }
-  
-});
+export default List = (props) => {
+    const [pokemons, setPokemons] = useState()
+    const [next, setNext] = useState()
+    const [refreshing, setRefreshing] = useState(false);
+    const [loadingMore, setLoadingMore] = useState(false);
+    
+    useEffect(() => {
+        getPokemons()
+    }, [])
 
-export default Listas;
+    const getPokemons = () => {
+        getPokemonList().then(data => {
+            setPokemons(data.results)
+            setNext(data.next)
+        })
+    }
+
+
+    const loadMore = () => {
+        setLoadingMore(true)
+        getPokemonList(next).then(data => {
+            setPokemons([...pokemons, ...data.results])
+            setNext(data.next)
+            setLoadingMore(false)
+        })
+    }
+    
+    const getPokemonImgId = (id) => {
+        console.log('long. ' + id.length)
+        switch (id.length) {
+            case 1:
+                return `00${id}`
+            case 2:
+                return `0${id}`
+            default:
+                return id
+        }
+    }
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        console.log('refreshing')
+        getPokemons()
+        wait(2000).then(() => setRefreshing(false));
+    }, []);
+    const renderItem = (item) => {
+        const path = item.url.split('/')
+        const imgID = getPokemonImgId(path[6])
+        return (
+            <TouchableOpacity onPress={() => props.navigation.navigate('ListDetail',
+                item = { item })} style={{
+                    marginVertical: '1%', alignItems: 'center',
+                    justifyContent: 'center', borderWidth: 0.5, borderColor: '#707070', borderRadius: 5
+                }}>
+                <ListItem style={{ width }}>
+                    <ListItem.Content>
+                        <ListItem.Title>{item.name}</ListItem.Title>
+                    </ListItem.Content>
+                    <Avatar size='large' source={{ uri: `${IMG_URL}${imgID}.png` }} />
+                </ListItem>
+            </TouchableOpacity>
+        )
+    }
+    return (
+        <View style={styles.container}>
+            <View style={styles.mainContent}>
+                <Header />
+                <FlatList
+                    data={pokemons}
+                    bounces={false}
+                    renderItem={(item, index) => renderItem(item.item, index)}
+                    keyExtractor={(item, index) => index}
+                    style={{ marginTop: height / 8 }}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={() => onRefresh()}
+                        />
+                    }
+                    ListFooterComponent={
+                        loadingMore ?
+                            (<ActivityIndicator />)
+                            :
+                            (<Button title='Cargar mas' onPress={() => loadMore()} />)
+                    }
+                />
+            </View>
+        </View>
+    )
+}
+export const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        width,
+        height,
+    },
+    buttonContent: {
+        width: width / 3,
+        height: width / 3,
+        margin: 10,
+        borderRadius: 5,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    mainContent: {
+        flex: 1,
+        width,
+        height,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'white',
+    },
+    rowConten: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    title: {
+        width: '100%',
+        textAlign: 'center',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    fonts: {
+        marginBottom: 8,
+    },
+    user: {
+        flexDirection: 'row',
+        marginBottom: 6,
+    },
+    image: {
+        width: 30,
+        height: 30,
+        marginRight: 10,
+    },
+    name: {
+        fontSize: 16,
+        marginTop: 5,
+    },
+})
+    
