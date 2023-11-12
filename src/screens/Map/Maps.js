@@ -22,7 +22,7 @@ const LATITUDE_DELTA = 0.00422;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 const Maps = ()=> {
-    const useRef = useRef()
+    const mapRef = useRef(null)
 
     const [region, setRegion] = useState({
         longitude:LONGITUDE,
@@ -52,7 +52,12 @@ const Maps = ()=> {
                     1000
                     );
 
-                setRegion({ longitude, latitude, ...region })
+                setRegion({
+                    latitude,
+                    longitude,
+                    latitudeDelta: region.latitudeDelta,
+                    longitudeDelta: region.longitudeDelta
+                })
                 console.log('posicion actual... Latitud: ' + `${JSON.stringify(longitude)}` + ' latitud: '+`${JSON.stringify(latitude)}`)
         },
             (error) => {
@@ -85,13 +90,12 @@ const Maps = ()=> {
       <View style={{ flex: 1 }}>
         {  region && ( 
             <>
-                <MapView
+              <MapView
                 ref={mapRef}
-                mapType='standard'
                 style={styles.map}
                 initialRegion={region}
                 // region={this.state.region}
-                onRegionChangeComplete={onRegionChange} />
+                />
             <View style={{
                 position: 'absolute', flexDirection: 'row',
                 backgroundColor: 'white', borderRadius: 100, width: WIDTH / 10, alignSelf: 'flex-end',
@@ -115,7 +119,8 @@ const Maps = ()=> {
                     {JSON.stringify(region.latitude)}</Text>
             </SafeAreaView>
           </>
-            )  }
+          ) 
+        }
           
       </View>
   );
