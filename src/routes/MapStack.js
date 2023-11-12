@@ -1,5 +1,5 @@
 import React,{ Component } from 'react';
-import Maps from '../screens/Map/Maps'
+import Maps from '../screens/Map/Maps';
 
 import { createStackNavigator } from '@react-navigation/stack';
 
