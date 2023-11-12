@@ -72,8 +72,8 @@ const Maps = ()=> {
         )
     }
 
-    onRegionChange = region => {
-        setRegion(region)
+    const onRegionChange = r => {
+        setRegion({r, ...region})
     }
 
     fitCoordinates = async () => {
@@ -83,36 +83,40 @@ const Maps = ()=> {
 
   return (
       <View style={{ flex: 1 }}>
-          <MapView
-              ref={mapRef}
-              mapType='standard'
-              style={styles.map}
-              initialRegion={region}
-              // region={this.state.region}
-              onRegionChangeComplete={onRegionChange}
-          />
-          <View style={{
-              position: 'absolute', flexDirection: 'row',
-              backgroundColor: 'white', borderRadius: 100, width: WIDTH / 10, alignSelf: 'flex-end',
-              margin: 20, marginRight: 30, alignItems: 'center', justifyContent: 'center'
-          }}>
-              <Icon
-                  name="crosshairs"
-                  type="font-awesome"
-                  color='#8d2d84'
-                  size={WIDTH / 10}
-                  onPress={() => fitCoordinates()}
-              />
-          </View>
-          <View style={styles.markerFixed}>
-              <Image style={styles.marker} source={require('../assets/images/pin.png')}
-              />
-          </View>
-          <SafeAreaView style={styles.footer}>
-              <Text style={styles.region}>longitud:
-                  {JSON.stringify(region.longitude)}{"\n"}latitud:
-                  {JSON.stringify(region.latitude)}</Text>
-          </SafeAreaView>
+        {  region && ( 
+            <>
+                <MapView
+                ref={mapRef}
+                mapType='standard'
+                style={styles.map}
+                initialRegion={region}
+                // region={this.state.region}
+                onRegionChangeComplete={onRegionChange} />
+            <View style={{
+                position: 'absolute', flexDirection: 'row',
+                backgroundColor: 'white', borderRadius: 100, width: WIDTH / 10, alignSelf: 'flex-end',
+                margin: 20, marginRight: 30, alignItems: 'center', justifyContent: 'center'
+            }}>
+                <Icon
+                    name="crosshairs"
+                    type="font-awesome"
+                    color='#8d2d84'
+                    size={WIDTH / 10}
+                    onPress={() => fitCoordinates()}
+                />
+            </View>
+            <View style={styles.markerFixed}>
+                <Image style={styles.marker} source={require('../../assets/images/pin.png')}
+                />
+            </View>
+            <SafeAreaView style={styles.footer}>
+                <Text style={styles.region}>longitud:
+                    {JSON.stringify(region.longitude)}{"\n"}latitud:
+                    {JSON.stringify(region.latitude)}</Text>
+            </SafeAreaView>
+          </>
+            )  }
+          
       </View>
   );
 }
